@@ -1,9 +1,8 @@
 public class EmployeeBook {
     private final Employee[] employees;
-    private static int size = 0;            //сделала эту переменную(size), чтоб не проверять ячейки массива на null
-    private final int capacity;                   //она покажет, в какую ячейку класть нового сотрудника, и сколько их имеется
+    private static int size = 0;
+    private final int capacity;
 
-    //если так нельзя, то переделаю
     public EmployeeBook(int capacity) {
         employees = new Employee[capacity];
         this.capacity = capacity;
@@ -17,12 +16,10 @@ public class EmployeeBook {
         for (int i = 0; i < size; i++) {
             if (employees[i].getLastName().equals(lastName) && employees[i].getFirstName().equals(firstName) &&
                     employees[i].getMiddleName().equals(middleName)) {
-                while (i < size - 1) {
-                    employees[i] = employees[i + 1];    //сдвигаю все влево
-                    i++;
+                for (; i < size - 1; i++) {
+                    employees[i] = employees[i + 1];
                 }
-                employees[i] = null;
-                size--;
+                employees[--size] = null;
                 return;
             }
         }
@@ -40,8 +37,8 @@ public class EmployeeBook {
         if (size == 0) {
             return 0f;
         } else {
-            float min = employees[0].getSalary();
-            for (int i = 1; i < size; i++) {
+            float min = Float.MAX_VALUE;
+            for (int i = 0; i < size; i++) {
                 if (employees[i].getSalary() < min) {
                     min = employees[i].getSalary();
                 }
@@ -51,13 +48,17 @@ public class EmployeeBook {
     }
 
     public float getMaxSalary() {
-        float max = 0;
-        for (int i = 0; i < size; i++) {
-            if (employees[i].getSalary() > max) {
-                max = employees[i].getSalary();
+        if (size == 0) {
+            return 0f;
+        } else {
+            float max = Float.MIN_VALUE;
+            for (int i = 0; i < size; i++) {
+                if (employees[i].getSalary() > max) {
+                    max = employees[i].getSalary();
+                }
             }
+            return max;
         }
-        return max;
     }
 
     public float getAverage() {
@@ -72,13 +73,14 @@ public class EmployeeBook {
 
     public void indexSalary(int percent) {
         for (int i = 0; i < size; i++) {
-            employees[i].setSalary(employees[i].getSalary() * (1 + percent / 100f));
-        }       // 1 - это 100% + проценты/100 - коэфф-т повышения. Возможно, нужно их (1 и 100)
-    }           //сделать переменными с именами??
+            float newSalary = employees[i].getSalary() * (1 + percent / 100f);
+            employees[i].setSalary(newSalary);
+        }
+    }
 
     public Employee findMinInDepartment(int dep) {
         Employee temp = null;
-        float min = 1000000000; // Допустимо ли здесь так делать?
+        float min = Float.MAX_VALUE; // Допустимо ли здесь так делать?
         for (int i = 0; i < size; i++) {
             if (employees[i].getDepartment() == dep && employees[i].getSalary() < min) {
                 temp = employees[i];
@@ -90,7 +92,7 @@ public class EmployeeBook {
 
     public Employee findMaxInDepartment(int dep) {
         Employee temp = null;
-        float max = 0;
+        float max = Float.MIN_VALUE;
         for (int i = 0; i < size; i++) {
             if (employees[i].getDepartment() == dep && employees[i].getSalary() > max) {
                 temp = employees[i];
@@ -155,14 +157,16 @@ public class EmployeeBook {
     }
 
     public void changeSalary(String firstName, String middleName, String lastName, float salary) {
-        if (findEmployee(firstName, middleName, lastName) != null) {
-            findEmployee(firstName, middleName, lastName).setSalary(salary);
+        Employee temp = findEmployee(firstName, middleName, lastName);
+        if (temp != null) {
+            temp.setSalary(salary);
         } else System.out.println("Сотрудник не найден\n");
     }
 
     public void changeDepartment(String firstName, String middleName, String lastName, int dep) {
-        if (findEmployee(firstName, middleName, lastName) != null) {
-            findEmployee(firstName, middleName, lastName).setDepartment(dep);
+        Employee temp = findEmployee(firstName, middleName, lastName);
+        if (temp != null) {
+            temp.setDepartment(dep);
         } else System.out.println("Сотрудник не найден\n");
     }
 

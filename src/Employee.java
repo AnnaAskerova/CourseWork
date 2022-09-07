@@ -1,8 +1,8 @@
 public class Employee {
     private static int count = 1;
-    final private int id = count++;
-    final private String firstName;
-    final private String middleName;
+    private final int id = count++;
+    private final String firstName;
+    private final String middleName;
     private final String lastName;            //ФИО final, т к по условию на них нет сеттеров
     private float salary;
     private int department;
